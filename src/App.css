@@ -6,7 +6,7 @@
     padding-top: 20px;
 }
 
-#btn-roll {
+.btn-primary {
     background-color: blueviolet;
     border: 0;
     padding: 10px;

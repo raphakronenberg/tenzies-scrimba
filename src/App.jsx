@@ -1,17 +1,22 @@
 import { useState } from 'react'
 import './App.css'
 import Dice from "./components/Dice.jsx"
+import Confetti from "react-confetti"
 
 function App() {
   function generateListofDice() {
     return Array.from({ length: 10 }, () => ({
-      value: Math.floor(Math.random() * 10) + 1,
+      value: Math.floor(Math.random() * 6) + 1, // Standard dice 1-6
       isHeld: false,
       id: crypto.randomUUID()
     }))
   }
 
   const [listOfDice, setListOfDice] = useState(generateListofDice)
+
+  // Check winning condition
+  const gameWon = listOfDice.every(die => die.isHeld) &&
+    listOfDice.every(die => die.value === listOfDice[0].value)
 
   function hold(id) {
     setListOfDice(prevDice => prevDice.map(die => {
@@ -20,33 +25,30 @@ function App() {
         : die
     }))
   }
+
   function rollDice() {
-    setListOfDice(prevDice => prevDice.map(die => {
-      return die.isHeld
-        ? die
-        : { ...die, value: Math.floor(Math.random() * 10) + 1 }
-    }))
-  }
-
-  function isFinished() {
-    const allHeld = listOfDice.every(die => die.isHeld)
-
-    const firstValue = listOfDice[0]
-    const allSameValue = listOfDice.every(die => die.value === firstValue)
-
-    if (allHeld && allSameValue) {
-      console.log("You won!")
+    if (gameWon) {
+      setListOfDice(generateListofDice())
+    } else {
+      setListOfDice(prevDice => prevDice.map(die => {
+        return die.isHeld
+          ? die
+          : { ...die, value: Math.floor(Math.random() * 6) + 1 }
+      }))
     }
   }
 
   return (
     <main>
+      {gameWon && <Confetti />}
       <h1>Tenzies</h1>
-      <span>Roll the dice until they are the same number. Click to lock in your value</span>
+      <p>Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
 
       <Dice listOfDice={listOfDice} hold={hold} />
 
-      <button id="btn-roll" onClick={rollDice}>Roll</button>
+      <button className="btn-primary" onClick={rollDice}>
+        {gameWon ? "New Game" : "Roll"}
+      </button>
     </main>
   )
 }
