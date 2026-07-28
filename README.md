@@ -1,4 +1,7 @@
-# React + Vite
+# Tenzies
+Scrimba Capstone Project #1
+
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
